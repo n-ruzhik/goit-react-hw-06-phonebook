@@ -1,17 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { updatedFilter } from '../../redux/filterSlice';
+import { getFilterByQuery } from '../../redux/selectors';
 import css from './Filter.module.css';
 
-const Filter = ({value, onChange}) => (
-    <div className={css.filterField}>
-        <label className={css.label}>Name filter</label>
-        <input type="text" placeholder="start typing a name" className={css.input} value={value} onChange={onChange} />
-    </div>
-)
+const Filter = () => {
+  const dispatch = useDispatch();
+
+  const onFilter = event => {
+    dispatch(updatedFilter(event.currentTarget.value));
+  };
+  const value = useSelector(getFilterByQuery);
+
+  <div className={css.filterField}>
+    <label className={css.label}>Name filter</label>
+    <input
+      type="text"
+      placeholder="start typing a name"
+      className={css.input}
+      value={value}
+      onChange={onFilter}
+    />
+  </div>;
+};
 
 export default Filter;
-
-Filter.propTypes = {
-  onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
-};

@@ -1,29 +1,55 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import css from './ContactForm.module.css';
+import { addContact } from '../../redux/contactsSlice';
+import { getContacts } from '../../redux/selectors';
+import Notiflix from 'notiflix';
 
-export default function ContactForm({ onSubmit }) {
+export default function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleChange = event => {
-    const prop = event.currentTarget.name;
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
-    switch (prop) {
-      case 'name':
-        setName(event.currentTarget.value);
-        break;
-      case 'number':
-        setNumber(event.currentTarget.value);
-        break;
-      default:
-        return;
-    }
+  const duplicationNameCheck = newName => {
+    return contacts.find(({ name }) => name === newName);
   };
 
-  const handleSubmit = event => {
-    event.preventDefault();
+  const duplicationNumberCheck = newNumber => {
+    return contacts.find(({ number }) => number === newNumber);
+  };
 
-    onSubmit({ name, number });
+  function handleInputChange(e) {
+    const { name, value } = e.target;
+
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+
+      case 'number':
+        setNumber(value);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (duplicationNameCheck(name) || duplicationNumberCheck(number)) {
+      Notiflix.Notify.failure(`This number is already in Сontacts`);
+      return;
+    }
+
+    dispatch(addContact({ name, number }));
+    reset();
+  }
+
+  const reset = () => {
     setName('');
     setNumber('');
   };
@@ -34,7 +60,7 @@ export default function ContactForm({ onSubmit }) {
         <input
           className={css.input}
           value={name}
-          onChange={handleChange}
+          onChange={handleInputChange}
           placeholder="write your name"
           type="text"
           name="name"
@@ -47,7 +73,7 @@ export default function ContactForm({ onSubmit }) {
         <input
           className={css.input}
           value={number}
-          onChange={handleChange}
+          onChange={handleInputChange}
           placeholder="+3** ** ** ** ***"
           type="tel"
           name="number"
