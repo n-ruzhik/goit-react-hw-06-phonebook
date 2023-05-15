@@ -11,16 +11,18 @@ const Filter = () => {
   };
   const value = useSelector(getFilterByQuery);
 
-  <div className={css.filterField}>
-    <label className={css.label}>Name filter</label>
-    <input
-      type="text"
-      placeholder="start typing a name"
-      className={css.input}
-      value={value}
-      onChange={onFilter}
-    />
-  </div>;
+  return (
+    <div className={css.filterField}>
+      <label className={css.label}>Name filter</label>
+      <input
+        type="text"
+        placeholder="start typing a name"
+        className={css.input}
+        value={value}
+        onChange={onFilter}
+      />
+    </div>
+  );
 };
 
 export default Filter;
